@@ -18,6 +18,7 @@ cursor.execute("""
 conn.commit()
 conn.close()
 
+from registroReservas import reservar_aula
 import tkinter as tk
 from tkinter import font
 
@@ -103,10 +104,8 @@ def _hover(color):
     return mapa.get(color, color)
 
 
-# FUNCIONES
-def reservar_aula():
-    pass
 
+# FUNCIONES
 def consultar_reserva():
     pass
 
