@@ -99,8 +99,8 @@ def reservar_aula():
 
         if Responsable.isdigit():
             print("Error. Ingrese nombre del responsable.")
-            return
-        continue
+            continue
+        break
     
 
     Descripción=input("DESCRIPCIÓN (opcional):")
