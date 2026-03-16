@@ -37,8 +37,8 @@ def reservar_aula():
             messagebox.showerror("Error", "Hora de inicio incorrecta. Use HH:MM (ej: 08:00)")
             return
 
-        p = HoraInicio.split(":")
-        if not p[0].isdigit() or not p[1].isdigit():
+        i = HoraInicio.split(":")
+        if not i[0].isdigit() or not i[1].isdigit():
             messagebox.showerror("Error", "La hora de inicio debe contener solo dígitos.")
             return
 
@@ -46,8 +46,8 @@ def reservar_aula():
             messagebox.showerror("Error", "Hora de fin incorrecta. Use HH:MM (ej: 10:00)")
             return
 
-        p = HoraFin.split(":")
-        if not p[0].isdigit() or not p[1].isdigit():
+        f = HoraFin.split(":")
+        if not f[0].isdigit() or not f[1].isdigit():
             messagebox.showerror("Error", "La hora de fin debe contener solo dígitos.")
             return
 
@@ -57,6 +57,31 @@ def reservar_aula():
 
         if not Responsable or Responsable.isdigit():
             messagebox.showerror("Error", "Ingrese el nombre del responsable.")
+            return
+        
+        # --- [NUEVA VALIDACIÓN DE DISPONIBILIDAD] ---
+        
+        conn = sqlite3.connect("reservas.db")
+        cursor = conn.cursor()
+
+        # Buscamos si existe un cruce en el mismo salón y fecha
+        query_check = """
+            SELECT * FROM reservas 
+            WHERE aula = ? 
+            AND fecha = ? 
+            AND (? < hora_fin AND ? > hora_inicio)
+        """
+        cursor.execute(query_check, (Aula, Fecha, HoraInicio, HoraFin))
+        conflicto = cursor.fetchone()
+
+        if conflicto:
+            # Si hay resultado, significa que el salón ya está ocupado en ese rango
+            messagebox.showerror(
+                "Conflicto de Horario", 
+                f"El aula {Aula} ya se encuentra reservada para el {Fecha} "
+                f"entre las {conflicto[3]} y {conflicto[4]}."
+            )
+            conn.close()
             return
 
         # GUARDAR EN LA BASE DE RESERVAS.DB
