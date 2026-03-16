@@ -31,33 +31,24 @@ class ConsultarReservaApp:
 
         self.crear_interfaz()
 
+# ... (todo el código anterior de la clase se mantiene igual hasta el final de crear_interfaz)
+
     def crear_interfaz(self):
         # Título principal
         header = ttk.Label(self.root, text="SISTEMA DE GESTIÓN DE AULAS", style="Header.TLabel")
         header.pack(pady=(25, 10))
 
-        # Marco de búsqueda
+        # Marco de búsqueda (Entry + Botón Buscar)
         search_frame = tk.Frame(self.root, bg="#1e1e26")
         search_frame.pack(pady=10)
 
-        self.entry_id = tk.Entry(search_frame, 
-                                 width=15, 
-                                 font=("Segoe UI", 12), 
-                                 bg="#3b3b4d", 
-                                 fg="white", 
-                                 insertbackground="white",
-                                 border=0)
+        self.entry_id = tk.Entry(search_frame, width=15, font=("Segoe UI", 12), bg="#3b3b4d", 
+                                 fg="white", insertbackground="white", border=0)
         self.entry_id.pack(side="left", padx=10, ipady=5)
 
-        btn_buscar = tk.Button(search_frame, 
-                               text="BUSCAR ID", 
-                               command=self.buscar_reserva,
-                               bg="#4cc9f0", 
-                               fg="#1e1e26",
-                               font=("Segoe UI", 9, "bold"),
-                               relief="flat",
-                               padx=20,
-                               cursor="hand2")
+        btn_buscar = tk.Button(search_frame, text="BUSCAR ID", command=self.buscar_reserva,
+                               bg="#4cc9f0", fg="#1e1e26", font=("Segoe UI", 9, "bold"),
+                               relief="flat", padx=20, cursor="hand2")
         btn_buscar.pack(side="left")
 
         # Contenedor de información (Estilo Card)
@@ -65,26 +56,32 @@ class ConsultarReservaApp:
         self.card.pack(padx=40, pady=20, fill="both", expand=True)
 
         self.detalles = {}
-        # Mapeo de columnas según la base de datos 
         campos = [
-            ("Aula", "aula"),
-            ("Fecha", "fecha"),
-            ("Hora Inicio", "hora_inicio"),
-            ("Hora Fin", "hora_fin"),
-            ("Responsable", "responsable"),
-            ("Descripción", "descripcion")
+            ("Aula", "aula"), ("Fecha", "fecha"), ("Hora Inicio", "hora_inicio"),
+            ("Hora Fin", "hora_fin"), ("Responsable", "responsable"), ("Descripción", "descripcion")
         ]
         
         for i, (label_text, key) in enumerate(campos):
             row_frame = tk.Frame(self.card, bg="#2d2d3a")
             row_frame.pack(fill="x", pady=8)
-            
-            lbl = ttk.Label(row_frame, text=f"{label_text.upper()}:", style="Data.TLabel", width=15)
-            lbl.pack(side="left")
-            
+            ttk.Label(row_frame, text=f"{label_text.upper()}:", style="Data.TLabel", width=15).pack(side="left")
             val = ttk.Label(row_frame, text="---", style="Value.TLabel")
             val.pack(side="left")
             self.detalles[key] = val
+
+        # --- AQUÍ ESTÁ EL NUEVO BOTÓN PARA VOLVER ---
+        btn_volver = tk.Button(self.root, 
+                               text="VOLVER AL MENÚ", 
+                               command=self.root.destroy, # Cierra solo esta ventana
+                               bg="#e05252", # Rojo para diferenciarlo de la búsqueda
+                               fg="white",
+                               font=("Segoe UI", 9, "bold"),
+                               relief="flat",
+                               pady=10,
+                               cursor="hand2")
+        btn_volver.pack(fill="x", padx=40, pady=(0, 20))
+
+# ... (el resto de las funciones buscar_reserva y limpiar_datos siguen igual)
 
     def buscar_reserva(self):
         reserva_id = self.entry_id.get()
