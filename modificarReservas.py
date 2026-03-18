@@ -28,7 +28,6 @@ def modificar_reserva():
             messagebox.showerror("Error", f"No se encontró ninguna reserva con ID {id_texto}.")
             return
 
-        # Rellenar campos con datos actuales
         for entry, valor in zip(
             [entry_aula, entry_fecha, entry_inicio, entry_fin, entry_responsable, entry_descripcion],
             [reserva[1], reserva[2], reserva[3], reserva[4], reserva[5], reserva[6] or ""]
@@ -52,7 +51,6 @@ def modificar_reserva():
         Responsable = entry_responsable.get().strip()
         Descripcion = entry_descripcion.get().strip()
 
-        # VALIDACIONES
         if not Aula:
             messagebox.showerror("Error", "El aula no puede estar vacía.")
             return
@@ -92,7 +90,6 @@ def modificar_reserva():
             messagebox.showerror("Error", "Ingrese el nombre del responsable.")
             return
 
-        # VALIDACIÓN DE CONFLICTO (excluyendo la reserva actual)
         conn = sqlite3.connect("reservas.db")
         cursor = conn.cursor()
         cursor.execute("""
@@ -111,7 +108,6 @@ def modificar_reserva():
             conn.close()
             return
 
-        # ACTUALIZAR
         cursor.execute("""
             UPDATE reservas
             SET aula=?, fecha=?, hora_inicio=?, hora_fin=?, responsable=?, descripcion=?
@@ -123,14 +119,12 @@ def modificar_reserva():
         messagebox.showinfo("Éxito", "¡Reserva modificada exitosamente!")
         ventana.destroy()
 
-    # ── VENTANA ──────────────────────────────────────────────────────────────
     ventana = tk.Toplevel()
     ventana.title("Modificar Reserva")
     ventana.geometry("600x620")
     ventana.resizable(False, False)
     ventana.configure(bg="#1e1e26")
 
-    # Estilos ttk
     style = ttk.Style()
     style.theme_use("clam")
     style.configure("Card.TFrame",   background="#2d2d3a", relief="flat")
@@ -139,10 +133,8 @@ def modificar_reserva():
     style.configure("Field.TLabel",  background="#2d2d3a", foreground="#dcdcdc",
                     font=("Segoe UI", 10))
 
-    # TÍTULO
     ttk.Label(ventana, text="MODIFICAR RESERVA", style="Header.TLabel").pack(pady=(25, 10))
 
-    # SECCIÓN BUSCAR
     search_frame = tk.Frame(ventana, bg="#1e1e26")
     search_frame.pack(pady=(0, 6))
 
@@ -160,12 +152,10 @@ def modificar_reserva():
     btn_buscar.bind("<Enter>", lambda e: btn_buscar.configure(bg="#7dd6f0"))
     btn_buscar.bind("<Leave>", lambda e: btn_buscar.configure(bg="#4cc9f0"))
 
-    # ETIQUETA DE ESTADO
     lbl_estado = tk.Label(ventana, text="Ingrese un ID y presione BUSCAR.",
                           bg="#1e1e26", fg="#666680", font=("Segoe UI", 9, "italic"))
     lbl_estado.pack(pady=(2, 8))
 
-    # CARD CON CAMPOS EDITABLES
     card = ttk.Frame(ventana, style="Card.TFrame", padding=20)
     card.pack(padx=40, pady=0, fill="both", expand=True)
 
@@ -200,7 +190,6 @@ def modificar_reserva():
     entry_responsable = entries["entry_responsable"]
     entry_descripcion = entries["entry_descripcion"]
 
-    # BOTÓN GUARDAR
     btn_guardar = tk.Button(ventana, text="GUARDAR CAMBIOS", command=guardar,
                             bg="#4cc9f0", fg="#1e1e26", font=("Segoe UI", 11, "bold"),
                             relief="flat", cursor="hand2", state="disabled")
@@ -210,7 +199,6 @@ def modificar_reserva():
     btn_guardar.bind("<Leave>", lambda e: btn_guardar.configure(bg="#4cc9f0")
                      if btn_guardar["state"] == "normal" else None)
 
-    # BOTÓN VOLVER
     btn_volver = tk.Button(ventana, text="VOLVER AL MENÚ", command=ventana.destroy,
                            bg="#e05252", fg="white", font=("Segoe UI", 9, "bold"),
                            relief="flat", cursor="hand2")
@@ -218,4 +206,4 @@ def modificar_reserva():
     btn_volver.bind("<Enter>", lambda e: btn_volver.configure(bg="#b33a3a"))
     btn_volver.bind("<Leave>", lambda e: btn_volver.configure(bg="#e05252"))
 
-    ventana.mainloop()
+    ventana.grab_set()

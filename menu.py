@@ -4,6 +4,7 @@ from tkinter import font
 from consultas import ConsultarReservaApp
 from registroReservas import reservar_aula
 from modificarReservas import modificar_reserva
+from cancelarReservas import cancelar_reserva
 
 
 conn = sqlite3.connect("reservas.db")
@@ -109,8 +110,6 @@ def _hover(color):
 def consultar_reserva(ventana_principal):
     ConsultarReservaApp(ventana_principal)
 
-def cancelar_reserva():
-    pass
 
 def salir(root):
     print("SALIENDO...")
