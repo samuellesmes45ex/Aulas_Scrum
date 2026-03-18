@@ -3,6 +3,16 @@ import tkinter as tk
 from tkinter import messagebox
 
 
+# ── Paleta (igual que menu.py) ──────────────────────────────────────────────
+BG      = "#0f1117"
+BG2     = "#181c27"
+ACENTO  = "#4f8ef7"
+ACENTO2 = "#3a6fd8"
+LINEA   = "#2a3150"
+TEXT    = "#e8eaf6"
+TEXT2   = "#7986a8"
+
+
 def hora_fin_valida(inicio, fin):
     h_ini, m_ini = int(inicio.split(":")[0]), int(inicio.split(":")[1])
     h_fin, m_fin = int(fin.split(":")[0]),   int(fin.split(":")[1])
@@ -12,10 +22,10 @@ def hora_fin_valida(inicio, fin):
 def reservar_aula():
 
     def guardar():
-        Aula       = entry_aula.get().strip()
-        Fecha      = entry_fecha.get().strip()
-        HoraInicio = entry_inicio.get().strip()
-        HoraFin    = entry_fin.get().strip()
+        Aula        = entry_aula.get().strip()
+        Fecha       = entry_fecha.get().strip()
+        HoraInicio  = entry_inicio.get().strip()
+        HoraFin     = entry_fin.get().strip()
         Responsable = entry_responsable.get().strip()
         Descripcion = entry_descripcion.get().strip()
 
@@ -58,13 +68,11 @@ def reservar_aula():
         if not Responsable or Responsable.isdigit():
             messagebox.showerror("Error", "Ingrese el nombre del responsable.")
             return
-        
-        # --- [NUEVA VALIDACIÓN DE DISPONIBILIDAD] ---
-        
+
+        # --- [VALIDACIÓN DE DISPONIBILIDAD] ---
         conn = sqlite3.connect("reservas.db")
         cursor = conn.cursor()
 
-        # Buscamos si existe un cruce en el mismo salón y fecha
         query_check = """
             SELECT * FROM reservas 
             WHERE aula = ? 
@@ -75,9 +83,8 @@ def reservar_aula():
         conflicto = cursor.fetchone()
 
         if conflicto:
-            # Si hay resultado, significa que el salón ya está ocupado en ese rango
             messagebox.showerror(
-                "Conflicto de Horario", 
+                "Conflicto de Horario",
                 f"El aula {Aula} ya se encuentra reservada para el {Fecha} "
                 f"entre las {conflicto[3]} y {conflicto[4]}."
             )
@@ -85,8 +92,6 @@ def reservar_aula():
             return
 
         # GUARDAR EN LA BASE DE RESERVAS.DB
-        conn = sqlite3.connect("reservas.db")
-        cursor = conn.cursor()
         cursor.execute("""
             INSERT INTO reservas (aula, fecha, hora_inicio, hora_fin, responsable, descripcion)
             VALUES (?, ?, ?, ?, ?, ?)
@@ -97,53 +102,71 @@ def reservar_aula():
         messagebox.showinfo("Éxito", "¡Reserva registrada exitosamente!")
         ventana.destroy()
 
-    
+    # ── Ventana principal ────────────────────────────────────────────────────
     ventana = tk.Toplevel()
     ventana.title("Registrar Reserva")
-    ventana.geometry("420x580")
+    ventana.geometry("460x620")
     ventana.resizable(False, False)
-    ventana.configure(bg="#e8f4f8")
+    ventana.configure(bg=BG)
 
-    # ENCABEZADO
-    header = tk.Frame(ventana, bg="#1a7fb5", height=70)
+    # ── Encabezado ───────────────────────────────────────────────────────────
+    header = tk.Frame(ventana, bg=BG2, height=110)
     header.pack(fill="x")
     header.pack_propagate(False)
+
     tk.Label(
         header,
         text="Registrar Reserva",
-        font=("Georgia", 16, "bold"),
-        bg="#1a7fb5", fg="white"
-    ).place(relx=0.5, rely=0.5, anchor="center")
+        font=("Segoe UI", 20, "bold"),
+        bg=BG2, fg=TEXT
+    ).place(relx=0.5, rely=0.42, anchor="center")
+
+    tk.Label(
+        header,
+        text="Complete los datos del aula a reservar",
+        font=("Segoe UI", 10),
+        bg=BG2, fg=TEXT2
+    ).place(relx=0.5, rely=0.75, anchor="center")
+
+    # Línea de acento (igual que en el menú)
+    tk.Frame(ventana, bg=ACENTO, height=2).pack(fill="x")
+
+    # ── Zona de campos ───────────────────────────────────────────────────────
+    centro = tk.Frame(ventana, bg=BG)
+    centro.pack(fill="both", expand=True)
 
     campos = [
-        ("Aula:",                    "entry_aula"),
-        ("Fecha (DD/MM/AAAA):",      "entry_fecha"),
-        ("Hora de inicio (HH:MM):",  "entry_inicio"),
-        ("Hora de fin (HH:MM):",     "entry_fin"),
-        ("Responsable:",             "entry_responsable"),
-        ("Descripción (opcional):",  "entry_descripcion"),
+        ("Aula",                   "entry_aula"),
+        ("Fecha  (DD/MM/AAAA)",    "entry_fecha"),
+        ("Hora de inicio  (HH:MM)","entry_inicio"),
+        ("Hora de fin  (HH:MM)",   "entry_fin"),
+        ("Responsable",            "entry_responsable"),
+        ("Descripción  (opcional)", "entry_descripcion"),
     ]
 
     entries = {}
     for label_text, key in campos:
+        # Etiqueta
         tk.Label(
-            ventana,
+            centro,
             text=label_text,
-            font=("Helvetica", 10, "bold"),
-            bg="#e8f4f8", fg="#1a5f7a",
+            font=("Segoe UI", 9),
+            bg=BG, fg=TEXT2,
             anchor="w"
-        ).pack(fill="x", padx=40, pady=(12, 0))
+        ).pack(fill="x", padx=40, pady=(12, 2))
 
+        # Campo de texto con estilo oscuro
         entry = tk.Entry(
-            ventana,
-            font=("Helvetica", 11),
-            bg="white", fg="#1a3a4a",
+            centro,
+            font=("Segoe UI", 11),
+            bg=BG2, fg=TEXT,
+            insertbackground=TEXT,          # cursor de texto visible
             relief="flat",
             highlightthickness=1,
-            highlightbackground="#90c8e0",
-            highlightcolor="#1a7fb5"
+            highlightbackground=LINEA,
+            highlightcolor=ACENTO
         )
-        entry.pack(fill="x", padx=40, ipady=5)
+        entry.pack(fill="x", padx=40, ipady=6)
         entries[key] = entry
 
     entry_aula        = entries["entry_aula"]
@@ -153,20 +176,34 @@ def reservar_aula():
     entry_responsable = entries["entry_responsable"]
     entry_descripcion = entries["entry_descripcion"]
 
-    # BOTÓN PARA RESERVAR
+    # ── Botón Guardar ────────────────────────────────────────────────────────
     btn = tk.Button(
-        ventana,
+        centro,
         text="Guardar Reserva",
-        font=("Helvetica", 12, "bold"),
-        bg="#1a7fb5", fg="white",
-        activebackground="#155f8a",
-        relief="flat", cursor="hand2",
+        font=("Segoe UI", 13),
+        bg=ACENTO, fg=TEXT,
+        activebackground=ACENTO2,
+        activeforeground=TEXT,
+        relief="flat",
+        cursor="hand2",
+        width=28,
+        height=2,
         command=guardar
     )
-    btn.pack(pady=24, ipadx=20, ipady=8)
-    btn.bind("<Enter>", lambda e: btn.configure(bg="#155f8a"))
-    btn.bind("<Leave>", lambda e: btn.configure(bg="#1a7fb5"))
+    btn.pack(pady=24)
+    btn.bind("<Enter>", lambda e: btn.configure(bg=ACENTO2))
+    btn.bind("<Leave>", lambda e: btn.configure(bg=ACENTO))
+
+    # ── Pie ──────────────────────────────────────────────────────────────────
+    pie = tk.Frame(ventana, bg=BG2, height=36)
+    pie.pack(side="bottom", fill="x")
+    pie.pack_propagate(False)
+
+    tk.Label(
+        pie,
+        text="© 2025 Gestión de Aulas  |  v1.0",
+        font=("Segoe UI", 8),
+        bg=BG2, fg=TEXT2
+    ).place(relx=0.5, rely=0.5, anchor="center")
 
     ventana.mainloop()
-
-
