@@ -1,7 +1,10 @@
 import sqlite3
+import tkinter as tk
+from tkinter import font
 from consultas import ConsultarReservaApp
 from registroReservas import reservar_aula
-import tkinter as tk
+from modificarReservas import modificar_reserva
+
 
 conn = sqlite3.connect("reservas.db")
 cursor = conn.cursor()
@@ -29,7 +32,7 @@ def menu():
     root.resizable(False, False)
     root.configure(bg="#e8f4f8")
 
-    #ENCABEZADO
+    # ENCABEZADO
     header = tk.Frame(root, bg="#1a7fb5", height=90)
     header.pack(fill="x")
     header.pack_propagate(False)
@@ -77,11 +80,11 @@ def menu():
         )
         btn.pack(pady=6)
 
-    #INTERACCIÓN BOTÓN-CURSOR
+        # INTERACCIÓN BOTÓN-CURSOR
         btn.bind("<Enter>", lambda e, b=btn, c=color: b.configure(bg=_hover(c)))
         btn.bind("<Leave>", lambda e, b=btn, c=color: b.configure(bg=c))
 
-    #PIE DE PÁGINA
+    # PIE DE PÁGINA
     tk.Label(
         root,
         text="© 2025 Gestión de Aulas",
@@ -94,7 +97,6 @@ def menu():
 
 
 def _hover(color):
-    """Oscurece ligeramente el color al pasar el cursor."""
     mapa = {
         "#1a7fb5": "#155f8a",
         "#2196a6": "#177a88",
@@ -104,14 +106,8 @@ def _hover(color):
     return mapa.get(color, color)
 
 
-
-# FUNCIONES
 def consultar_reserva(ventana_principal):
-    """Llama al módulo de consulta enviándole la ventana raíz."""
     ConsultarReservaApp(ventana_principal)
-
-def modificar_reserva():
-    pass
 
 def cancelar_reserva():
     pass
