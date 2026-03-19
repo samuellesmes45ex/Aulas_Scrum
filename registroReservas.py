@@ -42,6 +42,26 @@ def reservar_aula():
         if not partes[0].isdigit() or not partes[1].isdigit() or not partes[2].isdigit():
             messagebox.showerror("Error", "Día, mes y año deben ser números.")
             return
+        partes = Fecha.split("/")
+
+        dia, mes, anio = int(partes[0]), int(partes[1]), int(partes[2])
+
+        if dia == 0:
+            messagebox.showerror("Error", "El día no puede ser 00.")
+            return
+        if mes == 0:
+            messagebox.showerror("Error", "El mes no puede ser 00.")
+            return
+        if anio == 0:
+            messagebox.showerror("Error", "El año no puede ser 0000.")
+            return
+        if dia > 31:
+            messagebox.showerror("Error", "El día no puede ser mayor a 31.")
+            return
+        if mes > 12:
+            messagebox.showerror("Error", "El mes no puede ser mayor a 12.")
+            return
+     
 
         if len(HoraInicio) != 5 or HoraInicio[2] != ":":
             messagebox.showerror("Error", "Hora de inicio incorrecta. Use HH:MM (ej: 08:00)")
@@ -51,6 +71,13 @@ def reservar_aula():
         if not i[0].isdigit() or not i[1].isdigit():
             messagebox.showerror("Error", "La hora de inicio debe contener solo dígitos.")
             return
+        
+        if int(i[0]) > 23:
+            messagebox.showerror("Error", "La hora de inicio no puede ser mayor a 23.")
+            return
+        if int(i[1]) > 59:
+            messagebox.showerror("Error", "Los minutos de inicio no pueden ser mayores a 59.")
+            return
 
         if len(HoraFin) != 5 or HoraFin[2] != ":":
             messagebox.showerror("Error", "Hora de fin incorrecta. Use HH:MM (ej: 10:00)")
@@ -59,6 +86,13 @@ def reservar_aula():
         f = HoraFin.split(":")
         if not f[0].isdigit() or not f[1].isdigit():
             messagebox.showerror("Error", "La hora de fin debe contener solo dígitos.")
+            return
+
+        if int(f[0]) > 23:
+            messagebox.showerror("Error", "La hora de fin no puede ser mayor a 23.")
+            return
+        if int(f[1]) > 59:
+            messagebox.showerror("Error", "Los minutos de fin no pueden ser mayores a 59.")
             return
 
         if not hora_fin_valida(HoraInicio, HoraFin):
